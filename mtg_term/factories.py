@@ -10,20 +10,21 @@ from mtg_term.libraries import Library
 def CreatureCardFactory(**kwargs):
     name = kwargs.get('name', _faker.name())
     description = kwargs.get('description', _faker.text())
-    color = kwargs.get('color', _faker.color())
-    cost = kwargs.get('cost', _faker.cost_card(color))
+    colors = kwargs.get('colors', [_faker.color()])
+    cost = kwargs.get('cost', _faker.cost_card(colors[0]))
     power_toughness = kwargs.get('power_toughness', _faker.power_toughness())
+    image_uris = kwargs.get('image_uris')
 
     if isinstance(cost, str):
         cost = CostCard(cost)
 
     bulk_create = kwargs.get('bulk_create', 1)
     if bulk_create == 1:
-        return CreatureCard(name=name, description=description, cost=cost, color=color, power_toughness=power_toughness)
+        return CreatureCard(name=name, description=description, cost=cost, colors=colors, power_toughness=power_toughness, image_uris=image_uris)
 
     creature_cards_list = []
     for index in range(0, bulk_create):
-        card = CreatureCard(name=name, description=description, cost=cost, color=color, power_toughness=power_toughness)
+        card = CreatureCard(name=name, description=description, cost=cost, colors=colors, power_toughness=power_toughness, image_uris=image_uris)
         creature_cards_list.append(card)
 
     return creature_cards_list
