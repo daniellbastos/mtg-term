@@ -31,13 +31,13 @@ class Library:
             self.set_creatures(creatures)
 
     def validate_lands(self, lands):
-        if not all([isinstance(l, Land) for l in lands]):
+        if not isinstance(lands, list) or not all([isinstance(l, Land) for l in lands]):
             raise InvalidLandError('The list of Lands has some invalid Land. Lands {}'.format(lands))
 
         return True
 
     def validate_creatures(self, creatures):
-        if not all([isinstance(c, CreatureCard) and c.is_valid() for c in creatures]):
+        if not isinstance(creatures, list) or not all([isinstance(c, CreatureCard) and c.is_valid() for c in creatures]):
             raise InvalidCreatureError('The list of Creatures has some invalid Creature type. Creatures {}'.format(creatures))
 
         return True
@@ -53,3 +53,14 @@ class Library:
     @property
     def cards(self):
         return self.lands + self.creatures
+
+    def is_valid(self, raise_exception=False):
+        try:
+            self.validate_lands(self.lands)
+            self.validate_creatures(self.creatures)
+            return True
+        except (InvalidLandError, InvalidCreatureError) as exc:
+            if raise_exception:
+                raise exc
+
+            return False

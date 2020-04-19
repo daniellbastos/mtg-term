@@ -1,7 +1,7 @@
 import pytest
 
 from mtg_term.cards.lands import Forest, Island, Mountain, Plains, Swamp
-from mtg_term.exceptions import InvalidColorError, InvalidLandError, InvalidLibraryError
+from mtg_term.exceptions import InvalidColorError, InvalidLandError, InvalidLibraryError, InvalidCreatureError
 from mtg_term.libraries import Library
 from mtg_term.factories import CreatureCardFactory
 
@@ -53,6 +53,42 @@ def test_append_creatures_to_library():
 
     library = Library('red', lands=lands, creatures=creatures)
 
+    assert library.is_valid()
     assert 1 == len(library.lands)
     assert 1 == len(library.creatures)
     assert 2 == len(library.cards)
+
+
+@pytest.mark.parametrize('field_name,invalid_data', [
+    ('lands', None),
+    ('lands', ['foo']),
+    ('creatures', None),
+    ('creatures', ['foo']),
+])
+def test_override_data_to_update_library_and_made_invalid(field_name, invalid_data):
+    lands = [Mountain()]
+    creatures = [CreatureCardFactory(color='red')]
+
+    library = Library('red', lands=lands, creatures=creatures)
+
+    setattr(library, field_name, invalid_data)
+
+    assert not library.is_valid()
+
+
+@pytest.mark.parametrize('expected_exception,field_name,invalid_data', [
+    (InvalidLandError, 'lands', None),
+    (InvalidLandError, 'lands', ['foo']),
+    (InvalidCreatureError, 'creatures', None),
+    (InvalidCreatureError, 'creatures', ['foo']),
+])
+def test_override_data_to_update_library_and_raise_exception(expected_exception, field_name, invalid_data):
+    lands = [Mountain()]
+    creatures = [CreatureCardFactory(color='red')]
+
+    library = Library('red', lands=lands, creatures=creatures)
+
+    setattr(library, field_name, invalid_data)
+
+    with pytest.raises(expected_exception):
+        library.is_valid(raise_exception=True)
