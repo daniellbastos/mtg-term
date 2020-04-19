@@ -2,8 +2,12 @@ from mtg_term.cards.base import BaseCard
 
 
 class CreatureCard(BaseCard):
-    _fields = ['name', 'description', 'cost', 'color', 'power_toughness']
-    _required_fields = ['name', 'description', 'cost', 'color', 'power_toughness']
+    _fields = ['name', 'description', 'cost', 'colors', 'power_toughness', 'image_uris']
+    _required_fields = ['name', 'description', 'cost', 'colors', 'power_toughness']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.is_valid(raise_exception=False)
 
     def __str__(self):
         return f'{self.name} - {self.power_toughness} ({self.cost})'

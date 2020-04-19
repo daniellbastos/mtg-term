@@ -1,5 +1,7 @@
 import re
 
+from uuid import uuid4
+
 from mtg_term.exceptions import InvalidCardError, InvalidCostError
 from mtg_term.cards import _validate_color
 
@@ -45,12 +47,13 @@ class CostCard:
 
 
 class BaseCard:
-    _base_fields = ['name', 'description', 'cost', 'color']
-    _base_required_fields = ['name', 'description', 'cost', 'color']
+    _base_fields = ['name', 'description', 'cost', 'colors']
+    _base_required_fields = ['name', 'description', 'cost', 'colors']
     _fields = []
     _required_fields = []
 
     def __init__(self, **kwargs):
+        self._id = kwargs.get('_id', uuid4())
         self._initialize_fields(**kwargs)
 
     def __str__(self):
@@ -64,7 +67,7 @@ class BaseCard:
         self._all_required_fields = list(set(self._base_required_fields + self._required_fields))
 
         for field_name in self._all_fields:
-            setattr(self, field_name, kwargs[field_name])
+            setattr(self, field_name, kwargs.get(field_name))
 
     def is_valid(self, raise_exception=True):
         self._validate_fields()
@@ -79,9 +82,11 @@ class BaseCard:
 
         return self.cost
 
-    def validate_color(self):
-        _validate_color(self.color, raise_exception=True)
-        return self.color
+    def validate_colors(self):
+        for color in self.colors:
+            _validate_color(color, raise_exception=True)
+
+        return self.colors
 
     def _validate_fields(self):
         self.errors = {}
