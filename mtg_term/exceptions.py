@@ -16,6 +16,10 @@ class InvalidCreaturesToCombat(Exception):
     pass
 
 
+class InvalidCreatureError(Exception):
+    pass
+
+
 class NoDecisionValid(NotImplementedError):
     pass
 

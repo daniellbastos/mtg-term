@@ -17,9 +17,5 @@ NON_DECISION = 'no-decision'
 DIED = 'died'
 LIVED = 'lived'
 
-# library
-MAX_NUMBER_LANDS = 20
-
-
 # player
 INITIAL_LIFE = 20

@@ -1,11 +1,15 @@
 from mtg_term.cards import _validate_color
+from mtg_term.cards.creatures import CreatureCard
 from mtg_term.cards.lands import Land
-from mtg_term.constants import MAX_NUMBER_LANDS
-from mtg_term.exceptions import InvalidLandError, InvalidLibraryError
+from mtg_term.exceptions import InvalidCreatureError, InvalidLandError, InvalidLibraryError
 
 
 class Library:
     def __init__(self, colors, lands=[], creatures=[]):
+        self.colors = []
+        self.creatures = []
+        self.lands = []
+
         self._initialize_data(colors, lands, creatures)
 
     def __str__(self):
@@ -23,17 +27,29 @@ class Library:
         if lands:
             self.set_lands(lands)
 
-        self.creatures = creatures
+        if creatures:
+            self.set_creatures(creatures)
 
     def validate_lands(self, lands):
         if not all([isinstance(l, Land) for l in lands]):
             raise InvalidLandError('The list of Lands has some invalid Land. Lands {}'.format(lands))
 
-        if len(lands) > MAX_NUMBER_LANDS:
-            raise InvalidLibraryError('The max of lands is {}. You have {}'.format(MAX_NUMBER_LANDS, len(lands)))
+        return True
+
+    def validate_creatures(self, creatures):
+        if not all([isinstance(c, CreatureCard) and c.is_valid() for c in creatures]):
+            raise InvalidCreatureError('The list of Creatures has some invalid Creature type. Creatures {}'.format(creatures))
 
         return True
 
     def set_lands(self, lands):
         self.validate_lands(lands)
         self.lands = sorted(lands)
+
+    def set_creatures(self, creatures):
+        self.validate_creatures(creatures)
+        self.creatures = creatures
+
+    @property
+    def cards(self):
+        return self.lands + self.creatures
