@@ -8,13 +8,13 @@ A fazer
 
 V1
 - [ ]: Definição de uma Partida
-    - [ ]: Definição de um Jogador
-    - [ ]: Definição do Deck do jogador
+    - [x]: Definição de um Jogador
+    - [x]: Definição do Deck do jogador
     - [ ]: Criar identificador da Partida (automaticamente)
     - [ ]: Definição dos Jogadores
-        - [ ]: Dados do Jogador (nome)
-        - [ ]: Começar com 20 pontos de vida
-        - [ ]: Definição do Deck do Jogador
+        - [x]: Dados do Jogador (nome)
+        - [x]: Começar com 20 pontos de vida
+        - [x]: Definição do Deck do Jogador
         - [ ]: Definição de Mão inicial (7 cards que compõem o Deck)
     - [ ]: Definição do Campo de Batalha por Jogador (incompleta):
         - [ ]: Terrenos (apenas definir)
