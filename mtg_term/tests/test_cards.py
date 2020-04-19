@@ -58,27 +58,28 @@ def test_raise_exception_by_invalid_instance_cost_card():
 
 def test_is_valid_instance_base_card():
     cost = CostCard('red:1')
-    base_card = BaseCard(name='Card name', description='Long text...', cost=cost, color='red')
+    base_card = BaseCard(name='Card name', description='Long text...', cost=cost, colors=['red'])
 
     assert base_card.is_valid()
 
     assert f'<BaseCard Card name>' == repr(base_card)
     assert 'Card name (red:1)' == str(base_card)
 
+    assert base_card._id
     assert 'Card name' == base_card.name
     assert 'Long text...' == base_card.description
     assert 'red:1' == str(base_card.cost)
     assert cost == base_card.cost
     assert isinstance(base_card.cost, CostCard)
-    assert 'red' == base_card.color
+    assert ['red'] == base_card.colors
 
 
 def test_invalid_instance_base_card_by_required_fields():
-    base_card = BaseCard(name='', description='', cost='', color='')
+    base_card = BaseCard(name='', description='', cost='', colors=[])
     with pytest.raises(InvalidCardError) as expected_exc:
         base_card.is_valid()
 
-    expected_fields = ['name', 'description', 'cost', 'color']
+    expected_fields = ['name', 'description', 'cost', 'colors']
 
     assert len(expected_fields) == len(expected_exc.value.errors.keys())
     for field in expected_fields:
@@ -86,7 +87,7 @@ def test_invalid_instance_base_card_by_required_fields():
 
 
 def test_invalid_instance_base_card_by_cost():
-    base_card = BaseCard(name='Card name', description='Long text...', cost='red:1', color='red')
+    base_card = BaseCard(name='Card name', description='Long text...', cost='red:1', colors=['red'])
     with pytest.raises(InvalidCardError):
         base_card.is_valid()
 
@@ -95,19 +96,19 @@ def test_invalid_instance_base_card_by_cost():
 
 def test_invalid_instance_base_card_by_color():
     cost = CostCard('red:1')
-    base_card = BaseCard(name='Card name', description='Long text...', cost=cost, color='brown')
+    base_card = BaseCard(name='Card name', description='Long text...', cost=cost, colors=['brown'])
     with pytest.raises(InvalidCardError):
         base_card.is_valid()
 
-    assert 'color' in base_card.errors
+    assert 'colors' in base_card.errors
 
 
 def test_invalid_instance_creature_card_by_required_fields():
-    creature_card = CreatureCard(name='', description='', cost='', color='', power_toughness='')
+    creature_card = CreatureCard(name='', description='', cost='', colors=[], power_toughness='')
     with pytest.raises(InvalidCardError) as expected_exc:
         creature_card.is_valid()
 
-    expected_fields = ['name', 'description', 'cost', 'color', 'power_toughness']
+    expected_fields = ['name', 'description', 'cost', 'colors', 'power_toughness']
 
     assert len(expected_fields) == len(expected_exc.value.errors.keys())
     for field in expected_fields:
@@ -116,15 +117,16 @@ def test_invalid_instance_creature_card_by_required_fields():
 
 def test_invalid_instance_creature_card_by_color():
     with pytest.raises(InvalidColorError):
-        CreatureCardFactory(color='brown')
+        CreatureCardFactory(colors=['brown'])
 
 
 def test_is_valid_instance_creature_card():
     cost = CostCard('red:1')
-    creature_card = CreatureCard(name='Card name', description='Long text...', cost=cost, color='red', power_toughness='1/1')
+    creature_card = CreatureCard(name='Card name', description='Long text...', cost=cost, colors=['red'], power_toughness='1/1')
 
     assert creature_card.is_valid()
 
+    assert creature_card._id
     assert f'<CreatureCard Card name (red:1)>' == repr(creature_card)
     assert 'Card name - 1/1 (red:1)' == str(creature_card)
     assert 'Card name' == creature_card.name
@@ -132,8 +134,9 @@ def test_is_valid_instance_creature_card():
     assert 'red:1' == str(creature_card.cost)
     assert cost == creature_card.cost
     assert isinstance(creature_card.cost, CostCard)
-    assert 'red' == creature_card.color
+    assert ['red'] == creature_card.colors
     assert '1/1' == creature_card.power_toughness
+    assert None is creature_card.image_uris
 
 
 def test_validate_power_and_toughness_values_creature_card():

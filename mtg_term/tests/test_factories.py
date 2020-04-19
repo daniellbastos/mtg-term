@@ -7,21 +7,28 @@ from mtg_term.exceptions import InvalidColorError
 from mtg_term.factories import CreatureCardFactory, LibraryFactory
 
 
-def test_autofill_creature_card_factory():
+def test_autofill_required_fields_creature_card_factory():
     creature_card = CreatureCardFactory()
 
     assert creature_card.name
     assert creature_card.description
     assert creature_card.cost
     assert isinstance(creature_card.cost, CostCard)
-    assert creature_card.color
+    assert creature_card.colors
     assert creature_card.power_toughness
+    assert None is creature_card.image_uris
 
 
 def test_bulk_create_creature_card_factory():
     creature_cards_list = CreatureCardFactory(bulk_create=10)
 
     assert 10 == len(creature_cards_list)
+
+
+def test_fill_image_uris_field_creature_card_factory():
+    creature_card = CreatureCardFactory(image_uris={'foo': 'bar'})
+
+    assert {'foo': 'bar'} == creature_card.image_uris
 
 
 @pytest.mark.parametrize('field_name,custom_value', [
@@ -45,7 +52,7 @@ def test_custom_cost_card_data_creature_card_factory(cost_card_value):
 
 def test_invalid_color_creature_card_factory():
     with pytest.raises(InvalidColorError):
-        CreatureCardFactory(color='brown')
+        CreatureCardFactory(colors=['brown'])
 
 
 def test_valid_library_factory():
